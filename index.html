@@ -49,7 +49,7 @@
             justify-content: center;
             gap: 10px; 
             margin-top: 5px; 
-            z-index: 20; 
+ z-index: 20; 
         }
         .mode-btn {
             background: rgba(255, 255, 255, 0.1); 
@@ -75,7 +75,9 @@
             margin: auto;
         }
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1.2); transform-style: preserve-3d; }
-        .is-flipped { transform: rotateY(180deg); }
+        
+        /* ✨ 已修改：統一向左翻轉，角度改為 -180deg */
+        .is-flipped { transform: rotateY(-180deg); }
 
         .card-face {
             position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
@@ -93,7 +95,8 @@
             z-index: 2; 
         }
 
-        .card-front { background: transparent; transform: rotateY(180deg); z-index: 1; padding: 0; background-size: cover; background-position: center; }
+        /* ✨ 已修改：配合整體的旋轉方向，正面初始角度同步改為 -180deg */
+        .card-front { background: transparent; transform: rotateY(-180deg); z-index: 1; padding: 0; background-size: cover; background-position: center; }
 
         .card-front.quiz-mode-active {
             background-image: url('問題卡背景.png');
@@ -102,7 +105,7 @@
 
         /* 答對答錯提示文字：大小微調，並與選項按鈕字體一致 */
         #feedbackMsg { 
-            font-size: 1.1rem; /* ✨ 與縮小後的選項按鈕大小一致 */
+            font-size: 1.1rem; 
             font-weight: bold; 
             margin-top: 15px; 
             min-height: 1.5rem; 
@@ -116,15 +119,14 @@
         
         .options-container { display: flex; flex-direction: column; gap: 10px; width: 85%; margin: 0 auto; position: relative; z-index: 6; }
         
-        /* 選項按鈕文字：微調縮小一點點 */
+        /* 選項按鈕文字 */
         .opt-btn {
             background: rgba(255, 255, 255, 0.85); border: 2px solid rgba(0, 0, 0, 0.15);
             color: #000000; padding: 14px 12px; border-radius: 14px; cursor: pointer; transition: 0.3s; 
-            font-size: 1.1rem; /* ✨ 原 1.15rem，稍微縮小一點點 */
+            font-size: 1.1rem; 
             text-align: left;
             width: 100%; box-sizing: border-box; font-weight: bold;
         }
-        /* ✨ 已調整：答對時背景改為耀眼明亮藍，並加上雙層立體發光特效 */
         .opt-btn.correct-glow { 
             border-color: var(--success-blue) !important; 
             background: var(--success-blue) !important; 
@@ -182,7 +184,7 @@
         
         /* 題目文字：縮小字體與選項大小相近 */
         .quest-text {
-            font-size: 1.2rem; /* ✨ 原 1.5rem，縮小至跟選項視覺大小一樣的級別 */
+            font-size: 1.2rem; 
             line-height: 1.5;
             margin-bottom: 15px;
             text-align: center;
@@ -234,9 +236,9 @@
                 margin: auto;
             }
             .options-container { max-width: 480px; margin: 0 auto; }
-            .quest-text { max-width: 480px; font-size: 1.8rem; } /* ✨ 同步調小平板/電腦版題目 */
-            .opt-btn { font-size: 1.7rem; } /* ✨ 同步稍微微調選項 */
-            #feedbackMsg { font-size: 1.7rem; } /* ✨ 平板版答對答錯字與選項同步維持一致 */
+            .quest-text { max-width: 480px; font-size: 1.8rem; } 
+            .opt-btn { font-size: 1.7rem; } 
+            #feedbackMsg { font-size: 1.7rem; } 
             .event-overlay { padding: 0; }
         }
 
@@ -244,9 +246,9 @@
         @media (max-height: 650px) {
             .header h1 { font-size: 1.5rem; }
             .card-container { height: calc(100vh - 120px); }
-            .quest-text { font-size: 1.05rem; margin-bottom: 10px; line-height: 1.4; } /* ✨ 矮螢幕題目縮小 */
-            .opt-btn { padding: 10px 12px; font-size: 0.95rem; } /* ✨ 矮螢幕選項縮小 */
-            #feedbackMsg { font-size: 0.95rem; } /* ✨ 矮螢幕提示字同步與選項一致 */
+            .quest-text { font-size: 1.05rem; margin-bottom: 10px; line-height: 1.4; } 
+            .opt-btn { padding: 10px 12px; font-size: 0.95rem; } 
+            #feedbackMsg { font-size: 0.95rem; } 
             .main-btn { padding: 12px 45px; font-size: 1.1rem; }
             .info-box { padding: 18px; }
             .info-text { font-size: 0.95rem; margin-bottom: 14px; }
@@ -592,7 +594,7 @@
                 selectedBtn.classList.add('wrong-select');
                 btns[correctIndex].classList.add('correct-glow'); 
                 
-                msg.innerHTML = `正確答案：<br>${correctLetter}. ${correctText}`;
+                msg.innerHTML = `正確答案：${correctLetter}. ${correctText}`;
                 msg.style.color = "#e74c3c"; 
                 
                 speak(`這題答錯了，正確答案是：選項 ${correctLetter} ， ${correctText}`, () => {
