@@ -2,14 +2,14 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>睡眠大作戰💤 - 桌遊互動版</title>
     <style>
         :root {
             --dream-purple: #a18cd1;
             --dream-pink: #fbc2eb;
             --accent-gold: #ffe066;
-            --success-blue: #007bff; /* 💡 已調成更明亮耀眼的螢光寶石藍 */
+            --success-blue: #007bff;
             --error-red: #e74c3c;
         }
 
@@ -18,9 +18,8 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            /* 💡 核心全域縮放魔法：讓字體隨螢幕寬度動態調整，並限制最大與最小值 */
-            font-size: clamp(12px, 3.8vw, 18px); 
+            /* 💡 2. 改為 auto 允許內容超出時可以上下左右捲動（放大時才看得到邊緣） */
+            overflow: auto; 
         }
 
         body { 
@@ -32,7 +31,10 @@
             justify-content: space-between; 
             align-items: center;
             box-sizing: border-box;
-            padding: 1.2rem 1rem; /* 改用 rem，維持外邊距與畫面縮放比例 */
+            padding: 20px 10px;
+            /* 💡 3. 設定最低高度與寬度，確保畫面比例絕對固定，不會隨螢幕變形 */
+            min-height: 600px;
+            min-width: 320px;
         }
 
         .header { 
@@ -41,40 +43,38 @@
             width: 100%;
         }
         .header h1 { 
-            font-size: 1.8rem; /* 隨全域動態放大縮小 */
-            margin: 0.4rem 0; 
+            font-size: 1.8rem; 
+            margin: 5px 0; 
             text-shadow: 0 0 10px rgba(161, 140, 209, 0.5);
         }
         .mode-selector { 
             display: flex; 
             justify-content: center;
-            gap: 0.6rem; 
-            margin-top: 0.4rem; 
+            gap: 10px; 
+            margin-top: 5px; 
             z-index: 20; 
         }
         .mode-btn {
             background: rgba(255, 255, 255, 0.1); 
             border: 1px solid var(--dream-purple);
             color: #fff; 
-            padding: 0.5rem 1.2rem; /* 改用 rem，按鈕大小隨螢幕連動 */
+            padding: 8px 16px; 
             border-radius: 20px; 
             cursor: pointer; 
             transition: 0.3s;
-            font-size: 0.95rem; 
+            font-size: 1rem;
             font-weight: bold;
         }
         .mode-btn.active { background: var(--dream-purple); box-shadow: 0 0 15px var(--dream-purple); }
 
+        /* 💡 4. 將卡牌容器尺寸鎖定為固定 px，這樣手勢放大時它才會真的變大 */
         .card-container { 
             perspective: 1200px; 
-            width: 85vw;               /* 寬度隨螢幕視窗寬度調整 */
-            max-width: 24rem;          /* 大螢幕上的最大寬度限制 */
-            height: 52vh;              /* 高度隨螢幕高度彈性縮放，預留充足空間給上下元件 */
-            max-height: 32rem;         
-            min-height: 280px;         /* 避免極矮螢幕上過度壓扁 */
+            width: 340px;      /* 固定寬度 */
+            height: 480px;     /* 固定高度 */
             z-index: 10; 
             position: relative; 
-            margin: auto 0; 
+            margin: 20px 0; 
         }
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1.2); transform-style: preserve-3d; }
         .is-flipped { transform: rotateY(180deg); }
@@ -83,7 +83,7 @@
             position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
             border-radius: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center;
             box-shadow: 0 15px 40px rgba(0,0,0,0.5); border: 2px solid rgba(255, 255, 255, 0.15);
-            overflow: hidden; padding: 1.2rem; box-sizing: border-box; /* 卡牌內距採用 rem */
+            overflow: hidden; padding: 20px; box-sizing: border-box;
         }
 
         .card-back { 
@@ -105,7 +105,7 @@
         #feedbackMsg { 
             font-size: 1.1rem; 
             font-weight: bold; 
-            margin-top: 1rem; 
+            margin-top: 20px; 
             min-height: 1.5rem; 
             transition: 0.3s; 
             opacity: 0; 
@@ -115,20 +115,13 @@
             text-align: center; 
         }
         
-        .options-container { display: flex; flex-direction: column; gap: 0.6rem; width: 100%; position: relative; z-index: 6; }
+        .options-container { display: flex; flex-direction: column; gap: 10px; width: 100%; position: relative; z-index: 6; }
         
         .opt-btn {
             background: rgba(255, 255, 255, 0.85); border: 2px solid rgba(0, 0, 0, 0.15);
-            color: #000000; 
-            padding: 0.8rem 1rem; /* 選項按鈕大小改用 rem 控制 */
-            border-radius: 12px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            font-size: 1.05rem; 
-            text-align: left;
+            color: #000000; padding: 14px 12px; border-radius: 14px; cursor: pointer; transition: 0.3s; font-size: 1.15rem; text-align: left;
             width: 100%; box-sizing: border-box; font-weight: bold;
         }
-        /* ✨ 已調整：答對時背景改為耀眼明亮藍，並加上雙層立體發光特效 */
         .opt-btn.correct-glow { 
             border-color: var(--success-blue) !important; 
             background: var(--success-blue) !important; 
@@ -138,7 +131,7 @@
         .opt-btn.wrong-select { background: var(--error-red) !important; border-color: var(--error-red) !important; opacity: 0.9; color: #fff !important; }
 
         .quiz-overlay { 
-            padding: 1.5rem 1.2rem; 
+            padding: 24px 20px; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -152,15 +145,15 @@
         .event-overlay { width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; }
         .event-image { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
         .event-info-btn {
-            position: absolute; bottom: 0.8rem; left: 50%; transform: translateX(-50%);
+            position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
             background: linear-gradient(135deg, rgba(36, 36, 62, 0.95), rgba(26, 26, 46, 0.95)); 
             border: 2px dashed var(--accent-gold);
-            color: #fff; padding: 0.4rem 1.2rem; border-radius: 30px;
-            font-size: 0.85rem; font-weight: bold; cursor: pointer; z-index: 30;
+            color: #fff; padding: 6px 18px; border-radius: 30px;
+            font-size: 0.95rem; font-weight: bold; cursor: pointer; z-index: 30;
             box-shadow: 0 4px 15px rgba(255, 224, 102, 0.25); transition: all 0.3s ease;
             display: flex; align-items: center; gap: 4px;
         }
-        .event-info-btn span { color: var(--accent-gold); font-size: 1rem; }
+        .event-info-btn span { color: var(--accent-gold); font-size: 1.1rem; }
         .event-info-btn:hover, .event-info-btn:active { 
             transform: translateX(-50%) scale(1.05); 
             border-style: solid;
@@ -171,26 +164,22 @@
             width: 100%;
             text-align: center;
             z-index: 20;
-            margin-bottom: 0.5rem;
+            margin-bottom: 10px;
         }
         .main-btn { 
             background: linear-gradient(135deg, var(--dream-purple), var(--dream-pink)); 
-            color: #fff; border: none; 
-            padding: 0.8rem 4.5rem; /* 大按鈕採用 rem，會隨著螢幕寬度自動變大縮小 */
-            border-radius: 50px; 
-            font-weight: bold; cursor: pointer; 
-            font-size: 1.2rem; 
+            color: #fff; border: none; padding: 14px 60px; border-radius: 50px; 
+            font-weight: bold; cursor: pointer; font-size: 1.2rem; 
             box-shadow: 0 5px 15px rgba(161, 140, 209, 0.4);
             transition: 0.2s;
-            display: inline-block;
         }
         .main-btn:active { transform: scale(0.95); }
         .main-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .quest-text { 
-            font-size: 1.4rem; 
-            line-height: 1.4; 
-            margin-bottom: 1rem; 
+            font-size: 1.5rem; 
+            line-height: 1.5; 
+            margin-bottom: 15px; 
             text-align: center; 
             font-weight: bold; 
             cursor: pointer; 
@@ -209,7 +198,6 @@
             100% { transform: translate(var(--x-final), 100vh) rotate(720deg); opacity: 0; }
         }
 
-        /* 💡 彈出視窗同步使用 rem 等比例縮放 */
         .info-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(10, 10, 26, 0.85); display: flex; justify-content: center; align-items: center;
@@ -219,26 +207,18 @@
         .info-box {
             background: linear-gradient(135deg, #24243e, #1a1a2e);
             border: 2px solid var(--dream-purple); box-shadow: 0 0 30px rgba(161, 140, 209, 0.4);
-            width: 85%; max-width: 22rem; border-radius: 20px; padding: 1.5rem; box-sizing: border-box;
+            width: 85%; max-width: 340px; border-radius: 20px; padding: 25px; box-sizing: border-box;
             text-align: center; transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .info-modal.show .info-box { transform: scale(1); }
-        .info-title { font-size: 1.35rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 1rem; display: flex; justify-content: center; align-items: center; gap: 5px; }
-        .info-text { font-size: 1.05rem; line-height: 1.6; color: #fff; margin-bottom: 1.2rem; text-align: justify; font-weight: 500; }
+        .info-title { font-size: 1.35rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 14px; display: flex; justify-content: center; align-items: center; gap: 5px; }
+        .info-text { font-size: 1.1rem; line-height: 1.6; color: #fff; margin-bottom: 20px; text-align: justify; font-weight: 500; }
         .info-close-btn {
             background: linear-gradient(135deg, #a18cd1, #fbc2eb); border: none; color: #fff;
-            padding: 0.7rem 2rem; border-radius: 25px; font-weight: bold; font-size: 1.1rem; cursor: pointer; width: 100%;
+            padding: 12px 35px; border-radius: 25px; font-weight: bold; font-size: 1.1rem; cursor: pointer; width: 100%;
         }
 
-        /* 💡 當手機螢幕高度特別矮時（如橫放或舊型極窄手機），微調細節防跑版 */
-        @media (max-height: 600px) {
-            body { padding: 0.6rem 1rem; }
-            .header h1 { font-size: 1.4rem; margin: 0.2rem 0; }
-            .card-container { height: 48vh; }
-            .quest-text { font-size: 1.2rem; margin-bottom: 0.6rem; }
-            .opt-btn { padding: 0.6rem 0.8rem; font-size: 0.95rem; }
-            .main-btn { padding: 0.6rem 3.5rem; font-size: 1.1rem; }
-        }
+        /* 💡 5. 移除了原本會強制覆蓋比例的 @media 控制，確保大小與 Sweet-Sleep-Mission 一樣完全固定 */
     </style>
 </head>
 <body>
@@ -269,6 +249,7 @@
             <button class="info-close-btn" onclick="closeInfoModal()">我知道了</button>
         </div>
     </div>
+</body>
     <script>
         let currentMode = 'media'; 
         let isAnimating = false;
