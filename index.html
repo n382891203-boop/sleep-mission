@@ -74,8 +74,14 @@
             position: relative;
             margin: auto;
         }
-        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1.2); transform-style: preserve-3d; }
-        .is-flipped { transform: rotateY(180deg); }
+        /* 🔄 用 JS 自由累加角度來實現 360 度連續向左翻轉 */
+        .card-inner { 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1.2); 
+            transform-style: preserve-3d; 
+        }
 
         .card-face {
             position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
@@ -84,6 +90,7 @@
             overflow: hidden; padding: 20px; box-sizing: border-box;
         }
 
+        /* 🔄 卡背預設面朝前方 (0度) */
         .card-back { 
             background-image: url('卡背.png'); 
             background-size: cover;          
@@ -91,17 +98,27 @@
             background-repeat: no-repeat;    
             background-color: #24243e;      
             z-index: 2; 
+            transform: rotateY(0deg);
         }
 
-        .card-front { background: transparent; transform: rotateY(180deg); z-index: 1; padding: 0; background-size: cover; background-position: center; }
+        /* 🔄 卡面在背面時它是 180 度，所以旋轉到 180、540、900 時會正面朝前 */
+        .card-front { 
+            background: transparent; 
+            transform: rotateY(180deg); 
+            z-index: 1; 
+            padding: 0; 
+            background-size: cover; 
+            background-position: center; 
+        }
 
         .card-front.quiz-mode-active {
             background-image: url('問題卡背景.png');
             background-color: #fff; 
         }
 
+        /* 📢 答對答錯的回饋字樣放大到與選項按鈕一樣大 */
         #feedbackMsg { 
-            font-size: 1.1rem; 
+            font-size: clamp(1.15rem, 2.5vw, 1.6rem); 
             font-weight: bold; 
             margin-top: 20px; 
             min-height: 1.5rem; 
@@ -117,10 +134,11 @@
         
         .opt-btn {
             background: rgba(255, 255, 255, 0.85); border: 2px solid rgba(0, 0, 0, 0.15);
-            color: #000000; padding: 14px 12px; border-radius: 14px; cursor: pointer; transition: 0.3s; font-size: 1.15rem; text-align: left;
+            color: #000000; padding: 14px 12px; border-radius: 14px; cursor: pointer; transition: 0.3s; 
+            font-size: clamp(1.15rem, 2.5vw, 1.6rem); text-align: left;
             width: 100%; box-sizing: border-box; font-weight: bold;
         }
-        /* ✨ 已調整：答對時背景改為耀眼明亮藍，並加上雙層立體發光特效 */
+        /* ✨ 答對時背景改為耀眼明亮藍，並加上雙層立體發光特效 */
         .opt-btn.correct-glow { 
             border-color: var(--success-blue) !important; 
             background: var(--success-blue) !important; 
@@ -143,16 +161,19 @@
 
         .event-overlay { width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; }
         .event-image { width: 100%; height: 100%; object-fit: contain; display: block; cursor: pointer; }
+        
+        /* 💡 調整：小百科按鈕放大至約卡牌寬的 1/3 (120px)，字體與間距同步放大 */
         .event-info-btn {
             position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
             background: linear-gradient(135deg, rgba(36, 36, 62, 0.95), rgba(26, 26, 46, 0.95)); 
             border: 2px dashed var(--accent-gold);
-            color: #fff; padding: 6px 18px; border-radius: 30px;
-            font-size: 0.95rem; font-weight: bold; cursor: pointer; z-index: 30;
+            color: #fff; padding: 10px 0; border-radius: 30px;
+            font-size: 1.05rem; font-weight: bold; cursor: pointer; z-index: 30;
+            width: 120px; text-align: center;
             box-shadow: 0 4px 15px rgba(255, 224, 102, 0.25); transition: all 0.3s ease;
-            display: flex; align-items: center; gap: 4px;
+            display: flex; align-items: center; justify-content: center; gap: 4px;
         }
-        .event-info-btn span { color: var(--accent-gold); font-size: 1.1rem; }
+        .event-info-btn span { color: var(--accent-gold); font-size: 1.2rem; }
         .event-info-btn:hover, .event-info-btn:active { 
             transform: translateX(-50%) scale(1.05); 
             border-style: solid;
@@ -205,18 +226,23 @@
             z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
         }
         .info-modal.show { opacity: 1; pointer-events: auto; }
+        
+        /* 💡 調整：小百科框框 max-width 調整為 350px，與卡片寬度完全一致 */
         .info-box {
             background: linear-gradient(135deg, #24243e, #1a1a2e);
             border: 2px solid var(--dream-purple); box-shadow: 0 0 30px rgba(161, 140, 209, 0.4);
-            width: 85%; max-width: 340px; border-radius: 20px; padding: 25px; box-sizing: border-box;
+            width: 85%; max-width: 350px; border-radius: 20px; padding: 25px; box-sizing: border-box;
             text-align: center; transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .info-modal.show .info-box { transform: scale(1); }
-        .info-title { font-size: 1.35rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 14px; display: flex; justify-content: center; align-items: center; gap: 5px; }
-        .info-text { font-size: 1.1rem; line-height: 1.6; color: #fff; margin-bottom: 20px; text-align: justify; font-weight: 500; }
+        
+        /* 💡 調整：標題與內文字體跟著放大，讓長輩更易讀 */
+        .info-title { font-size: 1.5rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 16px; display: flex; justify-content: center; align-items: center; gap: 5px; }
+        .info-text { font-size: 1.25rem; line-height: 1.6; color: #fff; margin-bottom: 24px; text-align: justify; font-weight: 500; }
+        
         .info-close-btn {
             background: linear-gradient(135deg, #a18cd1, #fbc2eb); border: none; color: #fff;
-            padding: 12px 35px; border-radius: 25px; font-weight: bold; font-size: 1.1rem; cursor: pointer; width: 100%;
+            padding: 12px 35px; border-radius: 25px; font-weight: bold; font-size: 1.2rem; cursor: pointer; width: 100%;
         }
 
         /* 響應式優化 */
@@ -231,6 +257,16 @@
             .options-container { max-width: 480px; margin: 0 auto; }
             .quest-text { max-width: 480px; font-size: 2.5rem; }
             .opt-btn { font-size: 1.9rem; }
+            #feedbackMsg { font-size: 1.9rem; } 
+            
+            /* 💡 在大螢幕下，讓小百科視窗寬度同步放大跟隨卡牌容器寬度 */
+            .info-box { max-width: min(calc(85vw), calc(70vh * 875 / 1253)); }
+            .info-title { font-size: 2rem; }
+            .info-text { font-size: 1.65rem; }
+            .info-close-btn { font-size: 1.5rem; }
+            .event-info-btn { width: 160px; font-size: 1.35rem; padding: 12px 0; }
+            .event-info-btn span { font-size: 1.5rem; }
+            
             .event-overlay { padding: 0; }
         }
 
@@ -239,10 +275,12 @@
             .card-container { height: calc(100vh - 120px); }
             .quest-text { font-size: 1.25rem; margin-bottom: 10px; line-height: 1.4; }
             .opt-btn { padding: 10px 12px; font-size: 1rem; }
+            #feedbackMsg { font-size: 1rem; }
             .main-btn { padding: 12px 45px; font-size: 1.1rem; }
             .info-box { padding: 18px; }
-            .info-text { font-size: 0.95rem; margin-bottom: 14px; }
-            .event-info-btn { bottom: 8px; padding: 5px 14px; font-size: 0.85rem; }
+            .info-text { font-size: 1.05rem; margin-bottom: 14px; }
+            .info-title { font-size: 1.25rem; margin-bottom: 10px; }
+            .event-info-btn { bottom: 8px; padding: 6px 0; font-size: 0.9rem; width: 100px; }
         }
     </style>
 </head>
@@ -288,6 +326,7 @@
         let nextEventData = null;
         let nextQuizData = null;
         let cachedVoices = [];
+        let currentRotation = 0; 
 
         const quizData = [
             { text: "年長者每天建議睡眠時間約為？", options: ["3～4小時", "5～7小時", "9～12小時"], correct: 1, info: "專家建議年長者每天睡5到7小時就足夠了。雖然睡眠時間變短，但只要白天精神好，就不需要太過擔心喔！" },
@@ -309,7 +348,7 @@
             { text: "晚餐時間太晚可能會？", options: ["幫助入睡", "影響消化與睡眠", "沒影響"], correct: 1, info: "晚餐如果吃太晚或吃太飽，腸煙在睡眠時被迫加班蠕動消化，不但容易引發胃食道逆流，也會讓人睡得很不安穩。" },
             { text: "白天長時間不活動可能會？", options: ["更好睡", "影響晚上的睡眠", "沒關係"], correct: 1, info: "如果白天整天躺著、坐著看電視不動，身體沒有消耗能量，到了晚上自然就不會有足夠的睡意，容易變成惡性循環。" },
             { text: "睡前情緒緊張或焦慮會？", options: ["更快入睡", "影響入睡", "幫助深睡"], correct: 1, info: "焦慮會激發身體的交感神經，讓血壓上升、心跳變快，身體進入防衛狀態。睡前想些開心的事，有助放鬆神經。" },
-            { text: "良好的睡眠對長者重要性是？", options: ["維持健康與生活品質", "沒什麼幫助", "只是休息而已"], correct: 0, info: "優質的睡眠磁是長者對抗老化、維持好體力與好記憶力的天然補藥！睡得好，白天的生活才會充滿笑容與活力！" }
+            { text: "良好的睡眠對長者重要性是？", options: ["維持健康與生活品質", "沒什麼幫助", "只是休息而已"], correct: 0, info: "優質的睡眠磁是長者對抗老化、維持好體力與好記憶力的人然補藥！睡得好，白天的生活才會充滿笑容與活力！" }
         ];
         const eventData = [
             { text: "大家丟骰子比大小，數字最大的玩家，將自己的一個失眠怪給任意一位玩家。", img: "數位卡V2-01.png", info: "與朋友一起玩桌遊、動動腦並開懷大笑，可以舒緩一整天的壓力。心情放鬆了，自律神經就會穩定，晚上自然更好睡喔！" },
@@ -344,7 +383,6 @@
         let eventPool = [];
 
         function initPool(type) {
-            // 💡 安全相容處理：不論傳入 'media' 或 'event' 皆能正確指定
             if (type === 'quiz') {
                 quizPool = Array.from({length: quizData.length}, (_, i) => i);
             } else if (type === 'media' || type === 'event') {
@@ -352,11 +390,9 @@
             }
         }
 
-        // 初始化集
         initPool('quiz');
         initPool('media');
 
-        // 預載機制函數
         function prepareNextQuiz() {
             if (quizPool.length === 0) initPool('quiz');
             const idx = Math.floor(Math.random() * quizPool.length);
@@ -368,21 +404,18 @@
             const idx = Math.floor(Math.random() * eventPool.length);
             nextEventData = eventData[eventPool.splice(idx, 1)[0]];
             const img = new Image();
-            img.src = nextEventData.img; // 提早讓瀏覽器下載快取圖片，翻牌絕不閃爍白屏
+            img.src = nextEventData.img;
         }
 
-        // 啟動時預先抽取下一抽
         prepareNextQuiz();
         prepareNextEvent();
 
-        // TTS 語音包動態檢查
         if (window.speechSynthesis) {
             cachedVoices = window.speechSynthesis.getVoices();
             window.speechSynthesis.addEventListener('voiceschanged', () => {
                 cachedVoices = window.speechSynthesis.getVoices();
                 checkChineseVoice();
             });
-            // voiceschanged 可能在某些瀏覽器上不觸發，設定一個 2 秒 Fallback 警示
             setTimeout(checkChineseVoice, 2000);
         }
 
@@ -403,7 +436,9 @@
             document.getElementById('btn-media').classList.toggle('active', mode === 'media');
             
             const cardContent = document.getElementById('cardContent');
-            document.getElementById('cardInner').classList.remove('is-flipped');
+            
+            currentRotation = 0;
+            document.getElementById('cardInner').style.transform = `rotateY(0deg)`;
             
             if (mode === 'quiz') {
                 cardContent.classList.add('quiz-mode-active');
@@ -439,7 +474,6 @@
 
             if (callback) {
                 let called = false;
-                // 防止部分核心語音模組無回應的保險機制計時器
                 const fallback = setTimeout(() => {
                     if (!called) { called = true; callback(); }
                 }, Math.max(text.length * 150, 6000));
@@ -482,27 +516,24 @@
 
             btn.disabled = true;
 
-            if (inner.classList.contains('is-flipped')) {
-                inner.classList.remove('is-flipped');
-                setTimeout(() => {
-                    const contentText = updateCardContent();
-                    inner.classList.add('is-flipped');
-                    
-                    setTimeout(() => { 
-                        speak(contentText); 
-                        isAnimating = false; 
-                        btn.disabled = false; 
-                    }, 400);
-                }, 400);
-            } else {
-                const contentText = updateCardContent();
-                inner.classList.add('is-flipped');
-                setTimeout(() => { 
-                    speak(contentText); 
-                    isAnimating = false; 
-                    btn.disabled = false; 
-                }, 800);
-            }
+            currentRotation -= 360; 
+
+            setTimeout(() => {
+                updateCardContent();
+            }, 400);
+
+            inner.style.transform = `rotateY(${currentRotation}deg)`;
+
+            setTimeout(() => { 
+                speak(lastDrawnText); 
+                isAnimating = false; 
+                btn.disabled = false; 
+                
+                // 💡 如果是事件卡，抽出來直接自動呼叫，不需玩家再點一次
+                if (currentMode === 'media') {
+                    showInfoModal(activeQuizInfo);
+                }
+            }, 800);
         }
 
         function updateCardContent() {
@@ -512,15 +543,14 @@
             if (currentMode === 'quiz') {
                 container.classList.add('quiz-mode-active');
 
-                // 讀取已經預載好的卡片數據，若為空（極端例外）則降級即時抽取
                 const q = nextQuizData || (() => {
                     if (quizPool.length === 0) initPool('quiz');
                     const idx = Math.floor(Math.random() * quizPool.length);
                     return quizData[quizPool.splice(idx, 1)[0]];
                 })();
                 
-                nextQuizData = null; // 清空
-                prepareNextQuiz();   // 提早預備下一抽
+                nextQuizData = null; 
+                prepareNextQuiz();   
                 
                 textToRead = `${q.text}。選項 A、${q.options[0]}。選項 B、${q.options[1]}。選項 C、${q.options[2]}。`;
                 activeQuizInfo = q.info; 
@@ -539,19 +569,18 @@
                     btns.forEach(btn => {
                         btn.onclick = () => checkAnswer(btn, parseInt(btn.dataset.index), q.correct, q.options[q.correct]);
                     });
-                }, 500); 
+                }, 100); 
             } else {
                 container.classList.remove('quiz-mode-active');
 
-                // 讀取已經預載好的事件數據
                 const e = nextEventData || (() => {
                     if (eventPool.length === 0) initPool('media');
                     const idx = Math.floor(Math.random() * eventPool.length);
                     return eventData[eventPool.splice(idx, 1)[0]];
                 })();
                 
-                nextEventData = null; // 清空
-                prepareNextEvent();   // 提早選定並載入下張事件卡圖片
+                nextEventData = null; 
+                prepareNextEvent();   
                 
                 textToRead = e.text;
                 activeQuizInfo = e.info; 
@@ -559,7 +588,7 @@
                 container.innerHTML = `
                 <div class="event-overlay">
                     <img src="${e.img}" class="event-image" alt="事件圖片" onclick="replaySpeech()">
-                    <button class="event-info-btn" onclick="window.speechSynthesis.cancel(); showInfoModal(activeQuizInfo)"><span>💡</span> 睡眠小百科💤</button>
+                    <button class="event-info-btn" onclick="window.speechSynthesis.cancel(); showInfoModal(activeQuizInfo)"><span>💡</span> 百科</button>
                 </div>`;
             }
             
@@ -581,7 +610,7 @@
 
             if (selectedIndex === correctIndex) {
                 selectedBtn.classList.add('correct-glow');
-                msg.innerHTML = "太棒了！答對囉<br>可以丟棄一個失眠怪！";
+                msg.innerHTML = "🎉 太棒了！答對囉<br>可以丟棄一個失眠怪！";
                 msg.style.color = "var(--success-blue)"; 
                 
                 createConfetti(window.innerWidth / 2, window.innerHeight / 2);
@@ -593,7 +622,7 @@
                 selectedBtn.classList.add('wrong-select');
                 btns[correctIndex].classList.add('correct-glow'); 
                 
-                msg.innerHTML = `正確答案：${correctLetter}. ${correctText}`;
+                msg.innerHTML = `❌ 答錯囉！正確答案：${correctLetter}. ${correctText}`;
                 msg.style.color = "#e74c3c"; 
                 
                 speak(`這題答錯了，正確答案是：選項 ${correctLetter} ， ${correctText}`, () => {
