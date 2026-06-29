@@ -45,79 +45,141 @@
             text-shadow: 0 0 10px rgba(161, 140, 209, 0.5);
         }
         .mode-selector { 
-            display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; z-index: 20;
+            display: flex; justify-content: center; gap: 10px; margin-top: 5px; z-index: 20; 
         }
-        .mode-btn { 
-            padding: 10px 20px; border: 2px solid var(--dream-purple); background: transparent; color: white;
-            border-radius: 20px; cursor: pointer; transition: 0.3s;
+        .mode-btn {
+            background: rgba(255, 255, 255, 0.1); 
+            border: 1px solid var(--dream-purple);
+            color: #fff; 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            transition: 0.3s;
             font-size: clamp(1rem, 2.5vw, 1.6rem);
             font-weight: bold;
         }
         .mode-btn.active { background: var(--dream-purple); box-shadow: 0 0 15px var(--dream-purple); }
 
-        .card-container {
-            perspective: 1200px;
+        .card-container { 
+            perspective: 1200px; 
             width: 100%;
-            max-width: 350px;
-            height: calc(100vh - 150px);
-            max-height: 530px;
-            z-index: 10;
-            position: relative;
-            margin: auto;
+            max-width: 350px; 
+            height: calc(100vh - 150px); 
+            max-height: 530px; 
+            z-index: 10; 
+            position: relative; 
+            margin: auto; 
         }
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1.2); transform-style: preserve-3d; }
         .is-flipped { transform: rotateY(180deg); }
-        
+
         .card-face {
             position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
             border-radius: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center;
             box-shadow: none; border: none;
             overflow: hidden; padding: 20px; box-sizing: border-box;
         }
-        
+
         .card-back { 
-            background-image: url('卡背.png'); background-size: cover; background-position: center; 
-            background-repeat: no-repeat; background-color: #24243e; z-index: 2; text-align: center; 
+            background-image: url('卡背.png'); 
+            background-size: cover;          
+            background-position: center;    
+            background-repeat: no-repeat;    
+            background-color: #24243e;      
+            z-index: 2; 
+        }
+
+        .card-front { background: transparent; transform: rotateY(180deg); z-index: 1; padding: 0; background-size: cover; background-position: center; } 
+
+        .card-front.quiz-mode-active {
+            background-image: url('問題卡背景.png');
+            background-color: #fff; 
+        }
+
+        #feedbackMsg { 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            margin-top: 20px; 
+            min-height: 1.5rem; 
+            transition: 0.3s; 
+            opacity: 0; 
+            line-height: 1.4;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center; 
         }
         
-        .card-front { background: transparent; transform: rotateY(180deg); z-index: 1; padding: 0; background-size: cover; background-position: center; }
-
-        .card-front.quiz-mode-active { background-image: url('問題卡背景.png'); }
-
         .options-container { display: flex; flex-direction: column; gap: 10px; width: 85%; margin: 0 auto; position: relative; z-index: 6; }
         
         .opt-btn {
             background: rgba(255, 255, 255, 0.85); border: 2px solid rgba(0, 0, 0, 0.15);
-            padding: 12px; border-radius: 15px; cursor: pointer; font-weight: bold; width: 100%;
-            transition: 0.2s; color: #000;
+            color: #000000; padding: 14px 12px; border-radius: 14px; cursor: pointer; transition: 0.3s; font-size: 1.15rem; text-align: left;
+            width: 100%; box-sizing: border-box; font-weight: bold;
         }
-        .opt-btn:hover { background: #fff; transform: scale(1.02); }
         .opt-btn.correct-glow { 
-            border-color: var(--success-blue) !important; background: var(--success-blue) !important; 
-            box-shadow: 0 0 25px rgba(0, 123, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.5); color: #fff !important; 
+            border-color: var(--success-blue) !important; 
+            background: var(--success-blue) !important; 
+            box-shadow: 0 0 25px rgba(0, 123, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.5); 
+            color: #fff !important; 
         }
         .opt-btn.wrong-select { background: var(--error-red) !important; border-color: var(--error-red) !important; opacity: 0.9; color: #fff !important; }
 
+        .quiz-overlay { 
+            padding: 24px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%; 
+            height: 100%; 
+            box-sizing: border-box; 
+            background: transparent; 
+        }
+
         .event-overlay { width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; }
         .event-image { width: 100%; height: 100%; object-fit: contain; display: block; cursor: pointer; }
-        
         .event-info-btn {
             position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
             background: linear-gradient(135deg, rgba(36, 36, 62, 0.95), rgba(26, 26, 46, 0.95)); 
-            color: white; padding: 8px 20px; border-radius: 20px; cursor: pointer; border: 2px dashed var(--accent-gold);
+            border: 2px dashed var(--accent-gold);
+            color: #fff; padding: 6px 18px; border-radius: 30px;
+            font-size: 0.95rem; font-weight: bold; cursor: pointer; z-index: 30;
+            box-shadow: 0 4px 15px rgba(255, 224, 102, 0.25); transition: all 0.3s ease;
+            display: flex; align-items: center; gap: 4px;
         }
-
-        .footer-controls {
-            width: 100%; text-align: center; z-index: 20; margin-top: 15px; margin-bottom: 10px;
-        }
-        .main-btn { 
-            padding: 12px 30px; background: var(--dream-purple); color: white; border: none;
-            border-radius: 25px; font-size: 1.2rem; font-weight: bold; cursor: pointer;
+        .event-info-btn span { color: var(--accent-gold); font-size: 1.1rem; }
+        .event-info-btn:hover, .event-info-btn:active { 
+            transform: translateX(-50%) scale(1.05); 
+            border-style: solid;
+            box-shadow: 0 4px 20px rgba(255, 224, 102, 0.5);
         }
         
-        .quest-text {
-            font-size: 1.5rem; line-height: 1.5; margin-bottom: 15px; text-align: center;
-            font-weight: bold; cursor: pointer; color: #000000; width: 100%;
+        .footer-controls {
+            width: 100%;
+            text-align: center;
+            z-index: 20;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        .main-btn { 
+            background: linear-gradient(135deg, var(--dream-purple), var(--dream-pink)); 
+            color: #fff; border: none; padding: 14px 60px; border-radius: 50px; 
+            font-weight: bold; cursor: pointer; font-size: 1.2rem; 
+            box-shadow: 0 5px 15px rgba(161, 140, 209, 0.4);
+            transition: 0.2s;
+        }
+        .main-btn:active { transform: scale(0.95); }
+        .main-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .quest-text { 
+            font-size: 1.5rem; 
+            line-height: 1.5; 
+            margin-bottom: 15px; 
+            text-align: center; 
+            font-weight: bold; 
+            cursor: pointer; 
+            color: #000000;
+            width: 100%;
         }
 
         /* 響應式優化 */
@@ -125,7 +187,10 @@
             .card-container {
                 aspect-ratio: 875 / 1253;
                 width: min(100%, calc(70vh * 875 / 1253));
-                height: auto; max-width: unset; max-height: unset; margin: auto;
+                height: auto;
+                max-width: unset;
+                max-height: unset;
+                margin: auto;
             }
             .options-container { max-width: 480px; margin: 0 auto; }
             .quest-text { max-width: 480px; font-size: 2.5rem; }
